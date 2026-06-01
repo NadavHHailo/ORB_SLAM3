@@ -131,6 +131,18 @@ int main(int argc, char **argv)
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
     ORB_SLAM3::System SLAM(argv[1],argv[2],ORB_SLAM3::System::IMU_STEREO, false);
 
+    // vio-eval: per-frame timing CSV (frontend/backend/total ms), mirroring OpenVINS.
+    // ORB-SLAM3's tracking thread runs synchronously per frame (frontend = the comparable
+    // per-frame latency); the heavy backend (local BA) runs on a separate async thread and
+    // is NOT on the per-frame critical path, so backend is reported as nan here. See
+    // docs/build-orb-slam3.md / docs/plan.md for the cross-system timing caveat.
+    std::ofstream fTiming;
+    if (bFileName) {
+        fTiming.open(file_name + "_timing.csv");
+        fTiming << "timestamp,frontend,backend,total\n";
+        fTiming.precision(9);
+    }
+
     cv::Mat imLeft, imRight;
     for (seq = 0; seq<num_seq; seq++)
     {
@@ -198,6 +210,11 @@ int main(int argc, char **argv)
             double ttrack= std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1).count();
 
             vTimesTrack[ni]=ttrack;
+
+            // vio-eval: log per-frame tracking latency (ms). backend=nan (async local BA).
+            if(fTiming.is_open())
+                fTiming << std::fixed << tframe << ","
+                        << ttrack*1e3 << ",nan," << ttrack*1e3 << "\n";
 
             // Wait to load the next frame
             double T=0;
