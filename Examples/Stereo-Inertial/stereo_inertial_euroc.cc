@@ -23,6 +23,7 @@
 #include<chrono>
 #include <ctime>
 #include <sstream>
+#include <cstdlib>  // vio-eval: getenv (VIO_EVAL_SEQUENTIAL)
 
 #include <opencv2/core/core.hpp>
 
@@ -216,15 +217,21 @@ int main(int argc, char **argv)
                 fTiming << std::fixed << tframe << ","
                         << ttrack*1e3 << ",nan," << ttrack*1e3 << "\n";
 
-            // Wait to load the next frame
-            double T=0;
-            if(ni<nImages[seq]-1)
-                T = vTimestampsCam[seq][ni+1]-tframe;
-            else if(ni>0)
-                T = tframe-vTimestampsCam[seq][ni-1];
+            // Wait to load the next frame (real-time pacing).
+            // vio-eval: when VIO_EVAL_SEQUENTIAL is set, skip the throttle and feed
+            // frames back-to-back — the DR's recommended "sequential" mode for clean
+            // accuracy + true throughput (frames are never dropped either way).
+            if(!getenv("VIO_EVAL_SEQUENTIAL"))
+            {
+                double T=0;
+                if(ni<nImages[seq]-1)
+                    T = vTimestampsCam[seq][ni+1]-tframe;
+                else if(ni>0)
+                    T = tframe-vTimestampsCam[seq][ni-1];
 
-            if(ttrack<T)
-                usleep((T-ttrack)*1e6); // 1e6
+                if(ttrack<T)
+                    usleep((T-ttrack)*1e6); // 1e6
+            }
         }
 
         if(seq < num_seq - 1)
