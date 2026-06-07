@@ -1,0 +1,59 @@
+%YAML:1.0
+
+# Generated from UZH-FPV Kalibr calib by uzh_calib_to_orbslam3.py
+
+File.version: "1.0"
+
+Camera.type: "KannalaBrandt8"
+
+Camera1.fx: 275.46015578667294
+Camera1.fy: 274.9948095922592
+Camera1.cx: 315.958384100568
+Camera1.cy: 242.7123497822731
+Camera1.k1: -6.545154718304953e-06
+Camera1.k2: -0.010379525898159981
+Camera1.k3: 0.014935312423953146
+Camera1.k4: -0.005639061406567785
+
+Camera.width: 640
+Camera.height: 480
+Camera.fps: 30
+Camera.RGB: 1
+
+Stereo.ThDepth: 40.0
+
+# cam0 pose in IMU/body frame = inv(T_cam_imu)
+IMU.T_b_c1: !!opencv-matrix
+  rows: 4
+  cols: 4
+  dt: f
+  data: [-0.0272566917722, -0.713920612042, 0.699695957153, 0.00751450800931,
+         -0.999626064169, 0.0179314698992, -0.020644471939, 0.0240453507474,
+         0.00219193704774, -0.699997015772, -0.714142404092, 0.00577265199514,
+         0, 0, 0, 1]
+
+IMU.NoiseGyro: 0.05
+IMU.NoiseAcc: 0.1
+IMU.GyroWalk: 4e-05
+IMU.AccWalk: 0.002
+IMU.Frequency: 500.0
+
+# ORB Parameters
+ORBextractor.nFeatures: 1500
+ORBextractor.scaleFactor: 1.2
+ORBextractor.nLevels: 8
+ORBextractor.iniThFAST: 20
+ORBextractor.minThFAST: 7
+
+# Viewer (headless; values copied from EuRoC.yaml)
+Viewer.KeyFrameSize: 0.05
+Viewer.KeyFrameLineWidth: 1.0
+Viewer.GraphLineWidth: 0.9
+Viewer.PointSize: 2.0
+Viewer.CameraSize: 0.08
+Viewer.CameraLineWidth: 3.0
+Viewer.ViewpointX: 0.0
+Viewer.ViewpointY: -0.7
+Viewer.ViewpointZ: -1.8
+Viewer.ViewpointF: 500.0
+Viewer.imageViewScale: 1.0
